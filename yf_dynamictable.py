@@ -11,11 +11,11 @@ sort_factor = "Ascending"
 
 sort_dict = {"Descending":False, "Ascending":True} # dict to assign a parameter of .sort_values
 tickers_data= {} # empty dictionary
-attridata = {} # empty dictionary
+attri_data = {} # empty dictionary
 
 # creating empty dataframe variables dynamically 
 for at in Attributes:
-    attridata[at] = pd.DataFrame()
+    attri_data[at] = pd.DataFrame()
 
 for ticker in tickers_list:
     ticker_object = yf.Ticker(ticker)
@@ -38,20 +38,20 @@ combined_data.columns = ["Ticker", "Attribute", "Recent"]
 
 for df in range(len(Attributes)):
     # selecting from the complete dataframe the attributes from attributes list and creating a mini table for each attribute
-    attridata[Attributes[df]] = combined_data[combined_data["Attribute"]=="{}".format(Attributes[df])]
+    attri_data[Attributes[df]] = combined_data[combined_data["Attribute"]=="{}".format(Attributes[df])]
     # polishing the mini dataframes
-    attridata[Attributes[df]].rename(columns={"Recent":"{}".format(Attributes[df])}, inplace=True)
-    attridata[Attributes[df]] = attridata[Attributes[df]].set_index("Ticker")
+    attri_data[Attributes[df]].rename(columns={"Recent":"{}".format(Attributes[df])}, inplace=True)
+    attri_data[Attributes[df]] = attri_data[Attributes[df]].set_index("Ticker")
 
 # merging all the mini tables in one
-combined_minidata = pd.concat(attridata, axis=1)
+combined_minidata = pd.concat(attri_data, axis=1)
 
 # polishing the final dataframe
 combined_minidata.columns = combined_minidata.columns.droplevel(-1)
-dflimpo = combined_minidata.iloc[:, 1::2]
-dflimpo_org = dflimpo.sort_values("{}".format(Attributes[0]),ascending=sort_dict[sort_factor])
+clean_df = combined_minidata.iloc[:, 1::2]
+clean_df_org = clean_df.sort_values("{}".format(Attributes[0]),ascending=sort_dict[sort_factor])
 
 # outputs to use: excel, print and paste
-dflimpo_org.to_excel('./tabeladinamica.xlsx')
-print(dflimpo_org)
-dflimpo_org.to_clipboard(sep=',')
+clean_df_org.to_excel('./tabeladinamica.xlsx')
+print(clean_df_org)
+clean_df_org.to_clipboard(sep=',')
